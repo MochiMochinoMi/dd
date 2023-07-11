@@ -1,0 +1,67 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Daily bar chart
+{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ url_for('views.graph_selection') }}" class="text-white">Choose a Different Time</a>
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ url_for('views.graph_choice') }}" class="text-white">Choose a Different Plot</a>
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Enter Additional Details</h2>
+                    <form method="post" action="/graph_detailsd">
+                        <div class="mb-3">
+                            <label for="stocks" class="form-label">Select Stock:</label>
+                            <select id="stock" name="stock" class="form-select" required>
+                                {% for stock in stocks %}
+                                    <option value="{{ stock }}">{{ stock }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="logScale" name="log_scale" value="True">
+                            <label class="form-check-label" for="logScale">Log Scale</label>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            {% if plot_file_path %}
+                <div class="card mt-4">
+                    <div class="graph-container d-flex justify-content-center align-items-center">
+                        <img src="{{ url_for('static', filename=plot_path) }}" alt="Stock Data Plot" class="graph-image img-fluid">
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

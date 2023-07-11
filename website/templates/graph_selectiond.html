@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Graph Selection
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        <h2 class="text-center mt-3">{{ error }}</h2>
+    {% endif %}
+    <div class="container d-flex justify-content-center"> <!-- Add the "d-flex justify-content-center" classes to center the container content -->
+        <div class="col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('views.graph_choice') }}" class="text-white">Choose a Different Plot</a>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Select Date</h2>
+                        <form method="post" action="/graph_selectiond">
+                            <div class="mb-3">
+                                <label for="selected_date" class="form-label">Select Date:</label>
+                                <input type="date" id="selected_date" name="selected_date" class="form-control" required>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
