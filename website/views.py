@@ -49,8 +49,9 @@ def graph_selection():
             if stocks != None:
                 return redirect(url_for('views.graph_details', stocks=stocks, show_form=True,start_date=start_date,end_date=end_date))
         # No stocks available in the selected period
-        error = "No stocks available in the selected period."
-        return render_template('graph_selection.html', error=error, show_form=True)
+            elif stocks == None:
+                error = "No stocks available in the selected period."
+                return render_template('graph_selection.html', error=error, show_form=True)
     # Render the initial form
     return render_template('graph_selection.html', show_form=True)
 
@@ -90,9 +91,10 @@ def graph_selectiond():
             session['stocks'] = stocks
             if stocks != None:
                 return redirect(url_for('views.graph_detailsd', stocks=stocks, show_form=True,selected_date=selected_date))
-        # No stocks available in the selected period
-        error = "No stocks available in the selected Date."
-        return render_template('graph_selectiond.html', error=error, show_form=True)
+            elif stocks == None:
+       # No stocks available in the selected period
+                error = "No stocks available in the selected Date."
+                return render_template('graph_selectiond.html', error=error, show_form=True)
     # Render the initial form
     return render_template('graph_selectiond.html', show_form=True)
 

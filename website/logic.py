@@ -22,17 +22,18 @@ def extract_zip(zip_path):
 
     return temp_folder
 
-def avail_stocks(path,start_date,end_date):
-  start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-  end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-  df = stack_excel_data(path)
-  df.index = df.index.date
-  df=df[(df.index >= start_date) & (df.index <= end_date)]
-  L= list(np.unique(np.array(df["Name"])))
-  if len(L) == 0:
-    return None
-  else:
-    return L
+def avail_stocks(path, start_date, end_date):
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    df = stack_excel_data(path)
+    df.index = df.index.date
+    df = df[(df.index >= start_date) & (df.index <= end_date)]
+    if df.empty:
+        return None
+    else:
+        L = list(np.unique(np.array(df["Name"])))
+        return L
+
 
 
 
@@ -42,9 +43,10 @@ def avail_stocksd(path,selected_date):
   df.index = df.index.date
   df=df[(df.index == selected_date)]
   L= list(np.unique(np.array(df["Name"])))
-  if len(L) == 0:
-    return None
+  if df.empty:
+        return None
   else:
+    L = list(np.unique(np.array(df["Name"])))
     return L
 
 import datetime
