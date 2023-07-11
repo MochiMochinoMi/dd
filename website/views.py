@@ -62,6 +62,7 @@ def graph_details():
     stocks=session.get('stocks')
     start_date= session.get('start_date')
     end_date= session.get('end_date')
+    print(end_date)
     folder_path = session.get('folder_path')
     if 'duration' in request.form and 'variable' in request.form and 'stocks' in request.form:
             duration = request.form.get('duration')
@@ -70,9 +71,8 @@ def graph_details():
             plot_stock_data(folder_path, start_date, end_date, duration, selected_stocks, variable,log_scale=False)
             plot_file_name = 'GRAPH.png'
             plot_file_path = os.path.join(plot_file_name)
-            plot_file_nameqq = 'GRAPHss.png'
             if plot_file_path != None:
-                return render_template('graph_details.html', show_form=True,plot_path=plot_file_path,plot_file_path=plot_file_path,stocks=stocks,plot_file_nameqq=plot_file_nameqq)
+                return render_template('graph_details.html', show_form=True,plot_path=plot_file_path,plot_file_path=plot_file_path,stocks=stocks)
     # Render the initial form
     return render_template('graph_details.html', show_form=True,stocks=stocks)
 

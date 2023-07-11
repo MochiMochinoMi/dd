@@ -21,10 +21,11 @@ def extract_zip(zip_path):
         zip_ref.extractall(temp_folder)
 
     return temp_folder
+from datetime import datetime, timedelta
 
 def avail_stocks(path, start_date, end_date):
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date() 
     df = stack_excel_data(path)
     df.index = df.index.date
     df = df[(df.index >= start_date) & (df.index <= end_date)]
@@ -147,65 +148,50 @@ def plot_stock_data(path, start_date, end_date, duration, stock_names, plot_vari
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
     end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
     filtered_data = df[(df.index >= start_date) & (df.index <= end_date) & (df['Duration'] == duration)]
-
-    fig_main, ax_main = plt.subplots(figsize=(12, 6))
-    fig_warning, ax_warning = plt.subplots(figsize=(12, 2))
-
-    main_plots = []
-    no_data_stocks = []
+    
+    plt.figure(figsize=(12, 6))
     
     for stock_name in stock_names:
         stock_data = filtered_data[filtered_data['Name'] == stock_name]
         if len(stock_data) > 0:
-            main_plots.append(ax_main.plot(stock_data.index, stock_data[plot_variable], marker='o', label=stock_name)[0])
-        else:
-            no_data_stocks.append(stock_name)
+            plt.plot(stock_data.index, stock_data[plot_variable], marker='o', label=stock_name)
     
-    ax_main.set_xlabel('Date')
-    ax_main.set_ylabel(plot_variable)
-    ax_main.set_title(f'{plot_variable} For the ({duration}) Duration - from {start_date} to {end_date}')
-    ax_main.xaxis.set_major_locator(plt.MaxNLocator(10))
-    ax_main.grid(True)
-    ax_main.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel('Date')
+    plt.ylabel(plot_variable)
+    plt.title(f'{plot_variable} For the ({duration}) Duration - from {start_date} to {end_date}')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     
     if len(stock_names) > 0:
-        ax_main.set_xlim(start_date, end_date)
+        plt.xlim(start_date, end_date)
     
     if len(filtered_data) == 0:
-        ax_main.xaxis.set_major_locator(plt.NullLocator())
-        ax_main.yaxis.set_major_locator(plt.NullLocator())
-        ax_main.text(0.5, 0.5, 'No data available', ha='center', va='center', transform=ax_main.transAxes)
-    
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
+        plt.text(0.5, 0.5, 'No data available', ha='center', va='center', transform=plt.gca().transAxes)
+    else:
+        duration_days = (end_date - start_date).days
+        
+        ax = plt.gca()
+        if duration_days <= 60:  # Less than or equal to 2 months
+            ax.xaxis.set_major_locator(mdates.DayLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%Y'))
+        elif duration_days > 60 and duration_days <= 365:  # Between 2 months and 1 year
+            ax.xaxis.set_major_locator(mdates.MonthLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+        else:  # Larger than 1 year
+            ax.xaxis.set_major_locator(mdates.YearLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+            
     if log_scale:
-        ax_main.set_yscale('log')
+        plt.yscale('log')
     
-    if len(no_data_stocks) > 0:
-        no_data_text = '\n'.join([f'{stock_name} has no data in duration {duration} but has data in other durations in the period of {start_date} to {end_date}' for stock_name in no_data_stocks])
-        ax_warning.text(0.5, 0.5, no_data_text, ha='center', va='center', color='red')
-        ax_warning.axis('off')
-    
-    duration_days = (end_date - start_date).days
-    
-    if duration_days <= 60:  # Less than or equal to 2 months
-        ax_main.xaxis.set_major_locator(mdates.DayLocator())
-        ax_main.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b-%Y'))
-    elif duration_days > 60 and duration_days <= 365:  # Between 2 months and 1 year
-        ax_main.xaxis.set_major_locator(mdates.MonthLocator())
-        ax_main.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
-    else:  # Larger than 1 year
-        ax_main.xaxis.set_major_locator(mdates.YearLocator())
-        ax_main.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-
-    save_path_main = "website/static/GRAPH.png"
-    save_path_warning = "website/static/GRAPHss.png"
-
-    fig_main.tight_layout()
-    fig_main.savefig(save_path_main, dpi=300)
-    plt.close(fig_main)
-    
-    if len(no_data_stocks) > 0:
-        fig_warning.savefig(save_path_warning, dpi=300, bbox_inches='tight', pad_inches=0, transparent=True)
-        plt.close(fig_warning)
+    if len(filtered_data) == 0 or plot_variable not in filtered_data.columns:
+        message = f'No {plot_variable} data available'
+        plt.annotate(message, xy=(0.5, -0.1), xycoords='axes fraction', ha='center', va='center', color='red')
+    save_path = "website/static/GRAPH.png"
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
 
 
