@@ -90,6 +90,15 @@
                 </div>
             {% endif %}
         </div>
+        <div class="col-md-12">
+            {% if plot_file_nameqq %}
+                <div class="card mt-4">
+                    <div class="graph-container d-flex justify-content-center align-items-center">
+                        <img src="{{ url_for('static', filename=plot_file_nameqq) }}" alt="Stock Data Plot" class="graph-image img-fluid">
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
