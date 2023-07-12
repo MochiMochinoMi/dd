@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 import os
-from .logic import extract_zip,plot_stock_data,plot_single_daily_data,avail_stocks,avail_stocksd
+from .logic import extract_zip,plot_stock_data,plot_single_daily_data,avail_stocks,avail_stocksd,stack_excel_data
 import glob
 from flask import render_template, request, session, redirect, url_for
 import time
@@ -22,6 +22,7 @@ def home():
         # Construct the full folder path
         folder_path = os.path.join(extracted_folder)
         session['folder_path'] = folder_path
+        stack_excel_data(folder_path)
         print("Folder Path:", folder_path)
         return redirect(url_for('views.graph_choice'))
     return render_template('base.html')
@@ -43,7 +44,7 @@ def graph_selection():
             session['start_date'] = start_date
             session['end_date'] = end_date
             # Check if stocks are available in the selected period
-            folder_path = session.get('folder_path')
+            folder_path = 'website/static/data.csv'
             stocks = avail_stocks(folder_path,start_date,end_date)
             session['stocks'] = stocks
             if stocks != None:
@@ -63,7 +64,7 @@ def graph_details():
     start_date= session.get('start_date')
     end_date= session.get('end_date')
     print(end_date)
-    folder_path = session.get('folder_path')
+    folder_path = 'website/static/data.csv'
     if 'duration' in request.form and 'variable' in request.form and 'stocks' in request.form:
             duration = request.form.get('duration')
             variable = request.form.get('variable')
@@ -86,7 +87,7 @@ def graph_selectiond():
             selected_date = request.form.get('selected_date')
             session['selected_date'] = selected_date
             # Check if stocks are available in the selected period
-            folder_path = session.get('folder_path')
+            folder_path ='website/static/data.csv'
 
             stocks = avail_stocksd(folder_path,selected_date)
             session['stocks'] = stocks
@@ -105,7 +106,7 @@ def graph_selectiond():
 def graph_detailsd():
     stocks=session.get('stocks')
     selected_date= session.get('selected_date')
-    folder_path = session.get('folder_path')
+    folder_path = 'website/static/data.csv'
     if 'stock' in request.form:
             selected_stocks = request.form.get('stock')
             log_scale=False

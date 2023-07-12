@@ -26,8 +26,8 @@ from datetime import datetime, timedelta
 def avail_stocks(path, start_date, end_date):
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
     end_date = datetime.strptime(end_date, "%Y-%m-%d").date() 
-    df = stack_excel_data(path)
-    df.index = df.index.date
+    df = pd.read_csv(path,index_col="Date") 
+    df.index = pd.to_datetime(df.index).date
     df = df[(df.index >= start_date) & (df.index <= end_date)]
     if df.empty:
         return None
@@ -40,9 +40,8 @@ def avail_stocks(path, start_date, end_date):
 
 def avail_stocksd(path,selected_date):
   selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
-  df = stack_excel_data(path)
-  df.index = df.index.date
-  df=df[(df.index == selected_date)]
+  df = pd.read_csv(path,index_col="Date") 
+  df.index = pd.to_datetime(df.index).date
   L= list(np.unique(np.array(df["Name"])))
   if df.empty:
         return None
@@ -140,11 +139,12 @@ def stack_excel_data(folder_path):
     # Set the 'Date' column as the index of the DataFrame
     stacked_df.set_index('Date', inplace=True)
     stacked_df['Cumulative Value'] = stacked_df['Signal'] * stacked_df['Prediction']
+    stacked_df.to_csv('website/static/data.csv', index=True, date_format='%Y-%m-%d')
     return stacked_df
 
 def plot_stock_data(path, start_date, end_date, duration, stock_names, plot_variable, log_scale=False):
-    df = stack_excel_data(path)
-    df.index = df.index.date
+    df = pd.read_csv(path,index_col="Date")     
+    df.index = pd.to_datetime(df.index).date
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
     end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
     filtered_data = df[(df.index >= start_date) & (df.index <= end_date) & (df['Duration'] == duration)]
@@ -196,8 +196,8 @@ def plot_stock_data(path, start_date, end_date, duration, stock_names, plot_vari
 
 
 def plot_single_daily_data(path, ticker, time, log_scale=False):
-    data = stack_excel_data(path)
-    data.index = data.index.date
+    data = pd.read_csv(path,index_col="Date")     
+    data.index = pd.to_datetime(data.index).date
     time = datetime.strptime(time, "%Y-%m-%d").date()
 
     # Filter the data for the desired ticker
