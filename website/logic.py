@@ -42,7 +42,7 @@ def avail_stocksd(path,selected_date):
   selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
   df = pd.read_csv(path,index_col="Date") 
   df.index = pd.to_datetime(df.index).date
-  L= list(np.unique(np.array(df["Name"])))
+  df = df[(df.index == selected_date)]
   if df.empty:
         return None
   else:
@@ -196,7 +196,7 @@ def plot_stock_data(path, start_date, end_date, duration, stock_names, plot_vari
 
 
 def plot_single_daily_data(path, ticker, time, log_scale=False):
-    data = pd.read_csv(path,index_col="Date")     
+    data = pd.read_csv(path,index_col="Date") 
     data.index = pd.to_datetime(data.index).date
     time = datetime.strptime(time, "%Y-%m-%d").date()
 
