@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 import os
-from .logic import extract_zip,plot_stock_data,plot_single_daily_data,avail_stocks,avail_stocksd,stack_excel_data
+from .logic import extract_zip, plot_stock_data ,plot_single_daily_data,avail_stocks,avail_stocksd,stack_excel_data,plot_stock_data_2
 import glob
 from flask import render_template, request, session, redirect, url_for
 import time
@@ -123,7 +123,48 @@ def graph_detailsd():
 
 
 
+@views.route('/graph_selectiontd', methods=['GET', 'POST'])
+def graph_selectiontd():
+    if request.method == 'POST':
+        if 'start_date' in request.form and 'end_date' in request.form:
+            start_date = request.form.get('start_date')
+            end_date = request.form.get('end_date')
+            session['start_date'] = start_date
+            session['end_date'] = end_date
+            # Check if stocks are available in the selected period
+            folder_path = 'website/static/data.csv'
+            stocks = avail_stocks(folder_path,start_date,end_date)
+            session['stocks'] = stocks
+            if stocks != None:
+                return redirect(url_for('views.graph_detailstd', stocks=stocks, show_form=True,start_date=start_date,end_date=end_date))
+        # No stocks available in the selected period
+            elif stocks == None:
+                error = "No stocks available in the selected period."
+                return render_template('graph_selectiontd.html', error=error, show_form=True)
+    # Render the initial form
+    return render_template('graph_selectiontd.html', show_form=True)
 
+
+
+@views.route('/graph_detailstd', methods=['GET', 'POST'])
+def graph_detailstd():
+    stocks=session.get('stocks')
+    start_date= session.get('start_date')
+    end_date= session.get('end_date')
+    folder_path = 'website/static/data.csv'
+    if 'variable' in request.form and 'stock' in request.form:
+            variable = request.form.get('variable')
+            selected_stocks = request.form.getlist('stock')
+            selected_stocks = selected_stocks[0]
+            print(start_date)
+            print(end_date)
+            plot_stock_data_2(folder_path, start_date, end_date, stock_name=selected_stocks, plot_variable=variable, log_scale=False)
+            plot_file_name = 'GRAPHTD.png'
+            plot_file_path = os.path.join(plot_file_name)
+            if plot_file_path != None:
+                return render_template('graph_detailstd.html', show_form=True,plot_path=plot_file_path,plot_file_path=plot_file_path,stocks=stocks)
+    # Render the initial form
+    return render_template('graph_detailstd.html', show_form=True,stocks=stocks)
 
 
 

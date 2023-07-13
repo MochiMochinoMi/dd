@@ -8,7 +8,7 @@ Choose your graph
 {% block content %}
 <div class="container">
     <div class="row mt-4 justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="{{ url_for('views.graph_selection') }}" class="text-decoration-none">
                 <div class="card border-0 bg-light-green text-white text-center p-4">
                     <div class="card-body">
@@ -17,7 +17,16 @@ Choose your graph
                 </div>
             </a>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <a href="{{ url_for('views.graph_selectiontd') }}" class="text-decoration-none">
+                <div class="card border-0 bg-light-green text-white text-center p-4">
+                    <div class="card-body">
+                        <h5 class="card-title display-4 m-0">Multi-Duration TS Plot</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
             <a href="{{ url_for('views.graph_selectiond') }}" class="text-decoration-none">
                 <div class="card border-0 bg-light-green text-white text-center p-4">
                     <div class="card-body">

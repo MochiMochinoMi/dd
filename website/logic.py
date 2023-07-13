@@ -269,3 +269,109 @@ def plot_single_daily_data(path, ticker, time, log_scale=False):
     plot_file_path = 'website/static/GRAPH2.png'  # Modify the file path as needed
     plt.savefig(plot_file_path, dpi=300, bbox_inches='tight')
     plt.close()
+
+
+
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+def plot_stock_data_2(path, start_date, end_date, stock_name, plot_variable, log_scale=False):
+    df = pd.read_csv(path, index_col="Date")
+    df.index = pd.to_datetime(df.index).date
+    df.sort_index(inplace=True)
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    filtered_data = df[(df.index >= start_date) & (df.index <= end_date) & (df['Name'] == stock_name)]
+
+    plt.figure(figsize=(12, 6))
+
+    unique_dates = filtered_data.index.unique()
+    num_unique_dates = len(unique_dates)
+
+    for duration in filtered_data['Duration'].unique():
+        duration_data = filtered_data[filtered_data['Duration'] == duration]
+        if len(duration_data) > 0:
+            duration_data.sort_index(inplace=True)  # Sort data by index
+            plt.plot(duration_data.index, duration_data[plot_variable], marker='o', label=duration, linestyle='-')
+
+    plt.xlabel('Date')
+    plt.ylabel(plot_variable)
+    plt.title(f'{plot_variable} for Stock {stock_name} - from {start_date.strftime("%Y-%m-%d")} to {end_date.strftime("%Y-%m-%d")}')
+    plt.grid(True)
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    duration_days = (end_date - start_date).days
+
+    ax = plt.gca()
+
+    if duration_days <= 60:  # Less than or equal to 2 months
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    elif duration_days <= 365:  # Less than or equal to 1 year
+        ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=mdates.MO))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    else:  # Larger than 1 year
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+
+    if len(filtered_data) == 0 or plot_variable not in filtered_data.columns:
+        message = f'No {plot_variable} data available for Stock {stock_name}'
+        plt.annotate(message, xy=(0.5, -0.1), xycoords='axes fraction', ha='center', va='center', color='red')
+
+    save_path = "website/static/GRAPHTD.png"
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+
+
+
+
+
+
+
+
+
+
